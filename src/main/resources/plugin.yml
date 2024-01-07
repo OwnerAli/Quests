@@ -1,0 +1,6 @@
+name: Quests
+version: '${project.version}'
+main: me.ogali.quests.QuestsPlugin
+api-version: '1.20'
+authors: [xxAli]
+description: Applicant Task for PlayLegend.net - Quest System
