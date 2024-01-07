@@ -4,10 +4,10 @@ import org.bukkit.entity.Player;
 
 public abstract class AbstractReward {
 
-    private final String name;
+    private final String id;
 
-    protected AbstractReward(String name) {
-        this.name = name;
+    protected AbstractReward(String id) {
+        this.id = id;
     }
 
     public abstract void reward(Player player);

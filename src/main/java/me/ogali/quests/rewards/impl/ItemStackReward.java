@@ -9,8 +9,8 @@ public class ItemStackReward extends AbstractReward {
 
     private final ItemStack itemStack;
 
-    public ItemStackReward(String name, ItemStack itemStack, int amount) {
-        super(name);
+    public ItemStackReward(String id, ItemStack itemStack, int amount) {
+        super(id);
         this.itemStack = itemStack;
         itemStack.setAmount(amount);
     }
