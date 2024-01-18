@@ -27,7 +27,18 @@ public class PlayerAcceptQuestListener implements Listener {
         String[] signLines = {quest.getName(), quest.getDescription(), " ", " "};
         signRegistry.getSignLocationSet()
                 .forEach(location -> player.sendSignChange(location, signLines,
-                        DyeColor.LIME));
+                        DyeColor.BLACK, true));
     }
 
 }
+//        synchronized (this) {
+//            Player player = event.getQuestPlayer().getPlayer();
+//            Quest quest = event.getQuest();
+//
+//            Chat.tell(player, "&aYou've Accepted A Quest! &7(" + quest.getName() + ")");
+//
+//            String[] signLines = {quest.getName(), quest.getDescription(), " ", " "};
+//            signRegistry.getSignLocationSet()
+//                    .forEach(location -> player.sendSignChange(location, signLines,
+//                            DyeColor.LIME));
+//        }

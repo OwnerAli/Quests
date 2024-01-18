@@ -1,5 +1,10 @@
 package me.ogali.quests;
 
+import co.aikar.commands.MessageType;
+import co.aikar.commands.PaperCommandManager;
+import me.ogali.quests.commands.AdminQuestCommand;
+import me.ogali.quests.commands.PlayerQuestCommand;
+import me.ogali.quests.domain.Quest;
 import me.ogali.quests.listeners.BlockPlaceListener;
 import me.ogali.quests.listeners.PlayerAcceptQuestListener;
 import me.ogali.quests.listeners.PlayerJoinListener;
@@ -7,6 +12,7 @@ import me.ogali.quests.registries.PlayerRegistry;
 import me.ogali.quests.registries.QuestRegistry;
 import me.ogali.quests.registries.SignRegistry;
 import org.bukkit.Bukkit;
+import org.bukkit.ChatColor;
 import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.java.JavaPlugin;
 
@@ -23,24 +29,54 @@ public final class QuestsPlugin extends JavaPlugin {
         instance = this;
         initializeRegistries();
         registerListeners();
+        registerCommands();
     }
 
     @Override
     public void onDisable() {
-        // Plugin shutdown logic
     }
 
-    public void registerListeners() {
+    private void registerListeners() {
         PluginManager pluginManager = Bukkit.getPluginManager();
         pluginManager.registerEvents(new BlockPlaceListener(this), this);
         pluginManager.registerEvents(new PlayerAcceptQuestListener(signRegistry), this);
         pluginManager.registerEvents(new PlayerJoinListener(playerRegistry), this);
     }
 
-    public void initializeRegistries() {
+    private void initializeRegistries() {
         questRegistry = new QuestRegistry();
         playerRegistry = new PlayerRegistry();
         signRegistry = new SignRegistry();
+    }
+
+    private void registerCommands() {
+        PaperCommandManager cm = new PaperCommandManager(this);
+
+        registerQuestCommandContext(cm);
+        cm.setFormat(MessageType.SYNTAX, ChatColor.GREEN, ChatColor.GREEN);
+        cm.registerCommand(new PlayerQuestCommand(this));
+        cm.registerCommand(new AdminQuestCommand(questRegistry));
+    }
+
+    private void registerQuestCommandContext(PaperCommandManager paperCommandManager) {
+        paperCommandManager.getCommandContexts().registerContext(Quest.class, completion -> {
+
+            String questName = completion.popFirstArg();
+            String description = completion.popFirstArg();
+
+            if (questName == null || description == null) return null;
+
+            double requiredTaskAmount = 0;
+            try {
+                requiredTaskAmount = Double.parseDouble(completion.popFirstArg());
+            } catch (NumberFormatException ignored) {
+            }
+
+            String id = completion.popFirstArg();
+            if (id == null) return null;
+
+            return new Quest(questName, description, id);
+        });
     }
 
     public static QuestsPlugin getInstance() {

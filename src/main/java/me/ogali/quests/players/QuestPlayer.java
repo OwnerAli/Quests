@@ -1,6 +1,8 @@
 package me.ogali.quests.players;
 
+import me.ogali.quests.events.PlayerAcceptQuestEvent;
 import me.ogali.quests.progress.QuestProgress;
+import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 
 public class QuestPlayer {
@@ -22,6 +24,7 @@ public class QuestPlayer {
 
     public void setCurrentQuestProgress(QuestProgress currentQuestProgress) {
         this.currentQuestProgress = currentQuestProgress;
+        Bukkit.getPluginManager().callEvent(new PlayerAcceptQuestEvent(this, currentQuestProgress.getInprogressQuest()));
     }
 
 }

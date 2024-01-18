@@ -1,23 +1,26 @@
 package me.ogali.quests.domain;
 
 import me.ogali.quests.rewards.AbstractReward;
+import me.ogali.quests.tasks.AbstractTask;
 import org.bukkit.entity.Player;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.PriorityQueue;
+import java.util.Queue;
 
 public class Quest {
 
     private final String name;
     private final String description;
-    private final double requiredTaskAmount;
+    private final PriorityQueue<AbstractTask> taskQueue;
     private final List<AbstractReward> rewardsList;
     private final String id;
 
-    public Quest(String name, String description, double requiredTaskAmount, String id) {
+    public Quest(String name, String description, String id) {
         this.name = name;
         this.description = description;
-        this.requiredTaskAmount = requiredTaskAmount;
+        this.taskQueue = new PriorityQueue<>();
         this.rewardsList = new ArrayList<>();
         this.id = id;
     }
@@ -26,7 +29,7 @@ public class Quest {
     public Quest(Quest originalQuest) {
         this.name = originalQuest.name;
         this.description = originalQuest.description;
-        this.requiredTaskAmount = originalQuest.requiredTaskAmount;
+        this.taskQueue = originalQuest.taskQueue;
         this.rewardsList = new ArrayList<>(originalQuest.rewardsList);
         this.id = originalQuest.id;
     }
@@ -39,8 +42,8 @@ public class Quest {
         return description;
     }
 
-    public double getRequiredTaskAmount() {
-        return requiredTaskAmount;
+    public Queue<AbstractTask> getTaskQueue() {
+        return taskQueue;
     }
 
     public List<AbstractReward> getRewardsList() {
@@ -49,6 +52,10 @@ public class Quest {
 
     public String getId() {
         return id;
+    }
+
+    public void completeCurrentTask() {
+        taskQueue.poll();
     }
 
     public void complete(Player player) {
