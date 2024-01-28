@@ -3,6 +3,7 @@ package me.ogali.quests.registries;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
+import java.util.Set;
 
 public abstract class Registry<K, V> {
 
@@ -28,4 +29,7 @@ public abstract class Registry<K, V> {
         return keyValueMap;
     }
 
+    public Set<K> getKeys() {
+        return keyValueMap.keySet();
+    }
 }

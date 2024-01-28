@@ -1,6 +1,7 @@
 package me.ogali.quests.listeners;
 
 import me.ogali.quests.domain.Quest;
+import me.ogali.quests.progress.QuestProgress;
 import me.ogali.quests.registries.PlayerRegistry;
 import me.ogali.quests.tasks.impl.impl.BlockBreakTask;
 import org.bukkit.event.EventHandler;
@@ -19,9 +20,12 @@ public class BlockBreakListener implements Listener {
     public void onBreak(BlockBreakEvent event) {
         playerRegistry.getObjectByKey(event.getPlayer())
                 .ifPresent(player -> {
-                    Quest inprogressQuest = player.getCurrentQuestProgress().getInprogressQuest();
+                    QuestProgress currentQuestProgress = player.getCurrentQuestProgress();
+
+                    if (currentQuestProgress == null) return;
+                    Quest inprogressQuest = currentQuestProgress.getInprogressQuest();
                     if (!(inprogressQuest.getTaskQueue().peek() instanceof BlockBreakTask blockBreakTask)) return;
-                    blockBreakTask.getBlockBreakEventConsumer().accept(event);
+                    blockBreakTask.progressTask(event);
                 });
     }
 

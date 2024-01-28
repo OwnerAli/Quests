@@ -3,7 +3,7 @@ package me.ogali.quests.tasks.impl;
 import me.ogali.quests.tasks.AbstractTask;
 import org.bukkit.inventory.ItemStack;
 
-public class ItemStackTask extends AbstractTask {
+public abstract class ItemStackTask<T> extends AbstractTask<T> {
 
     private final ItemStack itemStack;
 

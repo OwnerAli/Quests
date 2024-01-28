@@ -5,14 +5,18 @@ import co.aikar.commands.PaperCommandManager;
 import me.ogali.quests.commands.AdminQuestCommand;
 import me.ogali.quests.commands.PlayerQuestCommand;
 import me.ogali.quests.domain.Quest;
+import me.ogali.quests.listeners.BlockBreakListener;
 import me.ogali.quests.listeners.BlockPlaceListener;
 import me.ogali.quests.listeners.PlayerAcceptQuestListener;
 import me.ogali.quests.listeners.PlayerJoinListener;
 import me.ogali.quests.registries.PlayerRegistry;
 import me.ogali.quests.registries.QuestRegistry;
 import me.ogali.quests.registries.SignRegistry;
+import me.ogali.quests.tasks.impl.impl.BlockBreakTask;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
+import org.bukkit.Material;
+import org.bukkit.inventory.ItemStack;
 import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.java.JavaPlugin;
 
@@ -38,6 +42,7 @@ public final class QuestsPlugin extends JavaPlugin {
 
     private void registerListeners() {
         PluginManager pluginManager = Bukkit.getPluginManager();
+        pluginManager.registerEvents(new BlockBreakListener(playerRegistry), this);
         pluginManager.registerEvents(new BlockPlaceListener(this), this);
         pluginManager.registerEvents(new PlayerAcceptQuestListener(signRegistry), this);
         pluginManager.registerEvents(new PlayerJoinListener(playerRegistry), this);
@@ -56,6 +61,7 @@ public final class QuestsPlugin extends JavaPlugin {
         cm.setFormat(MessageType.SYNTAX, ChatColor.GREEN, ChatColor.GREEN);
         cm.registerCommand(new PlayerQuestCommand(this));
         cm.registerCommand(new AdminQuestCommand(questRegistry));
+        cm.getCommandCompletions().registerCompletion("questIdList", handler -> questRegistry.getKeys());
     }
 
     private void registerQuestCommandContext(PaperCommandManager paperCommandManager) {
@@ -66,16 +72,13 @@ public final class QuestsPlugin extends JavaPlugin {
 
             if (questName == null || description == null) return null;
 
-            double requiredTaskAmount = 0;
-            try {
-                requiredTaskAmount = Double.parseDouble(completion.popFirstArg());
-            } catch (NumberFormatException ignored) {
-            }
-
             String id = completion.popFirstArg();
             if (id == null) return null;
 
-            return new Quest(questName, description, id);
+            Quest quest = new Quest(questName, description, id);
+            quest.getTaskQueue().add(new BlockBreakTask("test", 0, 10,
+                    "test", 1, new ItemStack(Material.DIRT)));
+            return quest;
         });
     }
 

@@ -4,18 +4,15 @@ import me.ogali.quests.QuestsPlugin;
 import me.ogali.quests.domain.Quest;
 import me.ogali.quests.registries.PlayerRegistry;
 import me.ogali.quests.tasks.impl.ItemStackTask;
+import me.ogali.quests.utilities.Chat;
 import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.inventory.ItemStack;
 
-import java.util.function.Consumer;
+public class BlockBreakTask extends ItemStackTask<BlockBreakEvent> {
 
-public class BlockBreakTask extends ItemStackTask {
-
-    private final Consumer<BlockBreakEvent> blockBreakEventConsumer;
-
-    protected BlockBreakTask(String displayName, double progress, double amount, String id, int priority, ItemStack itemStack) {
+    public BlockBreakTask(String displayName, double progress, double amount, String id, int priority, ItemStack itemStack) {
         super(displayName, progress, amount, id, priority, itemStack);
-        this.blockBreakEventConsumer = event -> {
+        this.objectConsumer = event -> {
             final PlayerRegistry playerRegistry = QuestsPlugin.getInstance()
                     .getPlayerRegistry();
 
@@ -24,13 +21,11 @@ public class BlockBreakTask extends ItemStackTask {
                         Quest inprogressQuest = questPlayer.getCurrentQuestProgress()
                                 .getInprogressQuest();
 
-                        incrementProgress(inprogressQuest);
+                        if (itemStack.getType() != event.getBlock().getType()) return;
+                        incrementTaskProgress(inprogressQuest, event.getPlayer());
+                        Chat.sendActionBarWithSound(event.getPlayer(), "&aBlock Mined! &7(" + getProgress() + "/" + amount + ")");
                     });
         };
-    }
-
-    public Consumer<BlockBreakEvent> getBlockBreakEventConsumer() {
-        return blockBreakEventConsumer;
     }
 
 }

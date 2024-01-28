@@ -1,7 +1,9 @@
 package me.ogali.quests.domain;
 
+import me.ogali.quests.QuestsPlugin;
 import me.ogali.quests.rewards.AbstractReward;
 import me.ogali.quests.tasks.AbstractTask;
+import me.ogali.quests.utilities.Chat;
 import org.bukkit.entity.Player;
 
 import java.util.ArrayList;
@@ -13,7 +15,7 @@ public class Quest {
 
     private final String name;
     private final String description;
-    private final PriorityQueue<AbstractTask> taskQueue;
+    private final PriorityQueue<AbstractTask<?>> taskQueue;
     private final List<AbstractReward> rewardsList;
     private final String id;
 
@@ -42,7 +44,7 @@ public class Quest {
         return description;
     }
 
-    public Queue<AbstractTask> getTaskQueue() {
+    public Queue<AbstractTask<?>> getTaskQueue() {
         return taskQueue;
     }
 
@@ -54,12 +56,17 @@ public class Quest {
         return id;
     }
 
-    public void completeCurrentTask() {
+    public void completeCurrentTask(Player player) {
         taskQueue.poll();
+
+        if (taskQueue.isEmpty()) complete(player);
     }
 
     public void complete(Player player) {
-
+        Chat.tell(player, "&3&lQUEST COMPLETED &m--&r&f " + name);
+        QuestsPlugin.getInstance().getPlayerRegistry()
+                .getObjectByKey(player)
+                .ifPresent(questPlayer -> questPlayer.setCurrentQuestProgress(null));
     }
 
 }

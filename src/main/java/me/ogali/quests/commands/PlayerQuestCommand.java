@@ -2,6 +2,7 @@ package me.ogali.quests.commands;
 
 import co.aikar.commands.BaseCommand;
 import co.aikar.commands.annotation.CommandAlias;
+import co.aikar.commands.annotation.CommandCompletion;
 import co.aikar.commands.annotation.Subcommand;
 import me.ogali.quests.QuestsPlugin;
 import me.ogali.quests.domain.Quest;
@@ -22,6 +23,7 @@ public class PlayerQuestCommand extends BaseCommand {
     }
 
     @Subcommand("accept")
+    @CommandCompletion("@questIdList")
     public void onAccept(Player player, String questId) {
         Optional<Quest> optionalQuestFromId = main.getQuestRegistry().getObjectByKey(questId);
         if (optionalQuestFromId.isEmpty()) {

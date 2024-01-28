@@ -26,10 +26,6 @@ public class QuestProgress {
     }
 
     public void updateProgress(Player player) {
-        if (progress++ >= inprogressQuest.getRequiredTaskAmount()) {
-            inprogressQuest.complete(player);
-        }
-        progress++;
     }
 
 }
