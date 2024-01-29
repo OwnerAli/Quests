@@ -1,6 +1,7 @@
 package me.ogali.quests.domain;
 
 import me.ogali.quests.QuestsPlugin;
+import me.ogali.quests.players.QuestPlayer;
 import me.ogali.quests.rewards.AbstractReward;
 import me.ogali.quests.tasks.AbstractTask;
 import me.ogali.quests.utilities.Chat;
@@ -64,9 +65,10 @@ public class Quest {
 
     public void complete(Player player) {
         Chat.tell(player, "&3&lQUEST COMPLETED &m--&r&f " + name);
+        rewardsList.forEach(abstractReward -> abstractReward.reward(player));
         QuestsPlugin.getInstance().getPlayerRegistry()
                 .getObjectByKey(player)
-                .ifPresent(questPlayer -> questPlayer.setCurrentQuestProgress(null));
+                .ifPresent(QuestPlayer::completeCurrentQuest);
     }
 
 }

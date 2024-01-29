@@ -12,4 +12,8 @@ public abstract class AbstractReward {
 
     public abstract void reward(Player player);
 
+    public String getId() {
+        return id;
+    }
+
 }

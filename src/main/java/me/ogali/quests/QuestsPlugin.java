@@ -11,7 +11,12 @@ import me.ogali.quests.listeners.PlayerAcceptQuestListener;
 import me.ogali.quests.listeners.PlayerJoinListener;
 import me.ogali.quests.registries.PlayerRegistry;
 import me.ogali.quests.registries.QuestRegistry;
+import me.ogali.quests.registries.RewardRegistry;
 import me.ogali.quests.registries.SignRegistry;
+import me.ogali.quests.rewards.AbstractReward;
+import me.ogali.quests.rewards.CommandType;
+import me.ogali.quests.rewards.impl.CommandReward;
+import me.ogali.quests.rewards.impl.ItemStackReward;
 import me.ogali.quests.tasks.impl.impl.BlockBreakTask;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
@@ -27,6 +32,7 @@ public final class QuestsPlugin extends JavaPlugin {
     private QuestRegistry questRegistry;
     private PlayerRegistry playerRegistry;
     private SignRegistry signRegistry;
+    private RewardRegistry rewardRegistry;
 
     @Override
     public void onEnable() {
@@ -52,6 +58,7 @@ public final class QuestsPlugin extends JavaPlugin {
         questRegistry = new QuestRegistry();
         playerRegistry = new PlayerRegistry();
         signRegistry = new SignRegistry();
+        rewardRegistry = new RewardRegistry();
     }
 
     private void registerCommands() {
@@ -60,7 +67,7 @@ public final class QuestsPlugin extends JavaPlugin {
         registerQuestCommandContext(cm);
         cm.setFormat(MessageType.SYNTAX, ChatColor.GREEN, ChatColor.GREEN);
         cm.registerCommand(new PlayerQuestCommand(this));
-        cm.registerCommand(new AdminQuestCommand(questRegistry));
+        cm.registerCommand(new AdminQuestCommand(questRegistry, rewardRegistry));
         cm.getCommandCompletions().registerCompletion("questIdList", handler -> questRegistry.getKeys());
     }
 
@@ -80,6 +87,33 @@ public final class QuestsPlugin extends JavaPlugin {
                     "test", 1, new ItemStack(Material.DIRT)));
             return quest;
         });
+
+        paperCommandManager.getCommandContexts().registerContext(AbstractReward.class, completion -> {
+
+            String rewardId = completion.popFirstArg();
+            String command = completion.popFirstArg();
+
+            if (rewardId == null) return null;
+
+            if (command == null) {
+                ItemStack itemInMainHand = completion.getPlayer().getInventory().getItemInMainHand();
+
+                int amount = 1;
+
+                try {
+                    amount = Integer.parseInt(completion.popFirstArg());
+                } catch (NumberFormatException ignored) {
+                }
+                return new ItemStackReward(rewardId, itemInMainHand, amount);
+            }
+
+            CommandType commandType = CommandType.PLAYER;
+            try {
+                commandType = CommandType.valueOf(completion.popFirstArg());
+            } catch (NullPointerException ignored) {
+            }
+            return new CommandReward(rewardId, command, commandType);
+        });
     }
 
     public static QuestsPlugin getInstance() {
@@ -96,6 +130,10 @@ public final class QuestsPlugin extends JavaPlugin {
 
     public SignRegistry getSignRegistry() {
         return signRegistry;
+    }
+
+    public RewardRegistry getRewardRegistry() {
+        return rewardRegistry;
     }
 
 }

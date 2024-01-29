@@ -38,7 +38,7 @@ public class PlayerQuestCommand extends BaseCommand {
                         Chat.tell(questPlayer.getPlayer(), "&7* " + currentQuestProgress.getInprogressQuest().getName());
                         return;
                     }
-                    questPlayer.setCurrentQuestProgress(new QuestProgress(optionalQuestFromId.get()));
+                    questPlayer.beginNewQuest(new QuestProgress(optionalQuestFromId.get()));
                 });
     }
 

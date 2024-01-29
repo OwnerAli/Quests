@@ -11,7 +11,7 @@ public class ItemStackReward extends AbstractReward {
 
     public ItemStackReward(String id, ItemStack itemStack, int amount) {
         super(id);
-        this.itemStack = itemStack;
+        this.itemStack = itemStack.clone();
         itemStack.setAmount(amount);
     }
 

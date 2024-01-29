@@ -10,7 +10,7 @@ public class CommandReward extends AbstractReward {
     private final String command;
     private final CommandType commandType;
 
-    protected CommandReward(String id, String command, CommandType commandType) {
+    public CommandReward(String id, String command, CommandType commandType) {
         super(id);
         this.command = command;
         this.commandType = commandType;

@@ -24,7 +24,16 @@ public class QuestPlayer {
 
     public void setCurrentQuestProgress(QuestProgress currentQuestProgress) {
         this.currentQuestProgress = currentQuestProgress;
-        Bukkit.getPluginManager().callEvent(new PlayerAcceptQuestEvent(this, currentQuestProgress.getInprogressQuest()));
+    }
+
+    public void beginNewQuest(QuestProgress currentQuestProgress) {
+        setCurrentQuestProgress(currentQuestProgress);
+        Bukkit.getPluginManager().callEvent(new PlayerAcceptQuestEvent(this,
+                currentQuestProgress.getInprogressQuest()));
+    }
+
+    public void completeCurrentQuest() {
+        this.currentQuestProgress = null;
     }
 
 }

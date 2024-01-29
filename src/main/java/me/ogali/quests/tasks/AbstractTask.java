@@ -12,8 +12,8 @@ public abstract class AbstractTask<T> implements Comparable<AbstractTask<T>> {
     private final String displayName;
     private final String id;
     private final int priority;
+    private double progress;
 
-    protected double progress;
     protected final double amount;
     protected Consumer<T> objectConsumer;
 
@@ -31,8 +31,9 @@ public abstract class AbstractTask<T> implements Comparable<AbstractTask<T>> {
 
     protected void incrementTaskProgress(Quest inprogressQuest, Player player) {
         progress++;
+
         if (progress == amount) {
-            Chat.tell(player, "&aYou've successfully completed your first task!");
+            Chat.tell(player, "&aYou've successfully completed this task!");
             inprogressQuest.completeCurrentTask(player);
         }
     }
